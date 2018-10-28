@@ -4,7 +4,7 @@
 
 AWS script for deploying your frontend applications.
 
-## Introcution
+## Introduction
 
 The most common configuration used for our projects is using an S3 Bucket to contain our static files. Optionally you can have a CloudFront playing as a CDN.
 
