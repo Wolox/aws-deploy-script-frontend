@@ -66,6 +66,6 @@ The dependency you need to install is [aws-sdk](https://www.npmjs.com/package/aw
 
 ## About
 
-This project is maintained by [Francisco Iglesias](https://github.com/FrankIglesias) and it was written by [Wolox](http://www.wolox.com.ar).
+This project is maintained by [Damián Finkelstein](https://github.com/damfinkel), [Pablo Ferro](https://github.com/pabloferro), [Francisco Iglesias](https://github.com/FrankIglesias) and [Lucas Zibell](https://github.com/LucasZibell) and it was written by [Wolox](http://www.wolox.com.ar).
 
 ![Wolox](https://raw.githubusercontent.com/Wolox/press-kit/master/logos/logo_banner.png)
