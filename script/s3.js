@@ -1,8 +1,8 @@
-const S3 = require("aws-sdk/clients/s3");
-const Cloudfront = require("aws-sdk/clients/cloudfront");
-const fs = require("fs");
-const awsCredentials = require("./aws.js");
-const path = require("path");
+const S3 = require("aws-sdk/clients/s3"),
+  Cloudfront = require("aws-sdk/clients/cloudfront"),
+  fs = require("fs"),
+  awsCredentials = require("./aws.js"),
+  path = require("path");
 
 let credentials;
 if (process.argv[2]) credentials = awsCredentials[process.argv[2]];
@@ -15,7 +15,7 @@ const uploader = new S3({
 });
 
 function read(file) {
-   return new Promise((resolve, _) => {
+  return new Promise((resolve, _) => {
     fs.readFile("build/" + file, (_, data) => {
       var base64data = new Buffer(data, "binary");
       resolve(base64data);
@@ -37,15 +37,13 @@ function read(file) {
           } else if (error) {
             reject("An error has occurred during the upload");
           }
-          console.log('Successfully uploaded', file);
+          console.log("Successfully uploaded", file);
           resolve(file);
         }
       );
     });
   });
 }
-
-
 
 const recursiveRead = function(dir, done) {
   var results = [];
@@ -72,24 +70,29 @@ const recursiveRead = function(dir, done) {
 
 recursiveRead("build/", function(err, results) {
   if (err) throw err;
-  Promise.all(results
-    .map(result => result.slice(result.indexOf("build") + 6))
-    .map(read)).then(() => {
-      var params = {
-        DistributionId: credentials.distributionId, /* required */
-        InvalidationBatch: { /* required */
-          CallerReference: new Date().getTime().toString(), /* required */
-          Paths: { /* required */
-            Quantity: results.length, /* required */
-            Items: results
-          }
+  Promise.all(
+    results.map(result => result.slice(result.indexOf("build") + 6)).map(read)
+  ).then(() => {
+    var params = {
+      DistributionId: credentials.distributionId /* required */,
+      InvalidationBatch: {
+        /* required */
+        CallerReference: new Date().getTime().toString() /* required */,
+        Paths: {
+          /* required */
+          Quantity: results.length /* required */,
+          Items: results
         }
-      };
+      }
+    };
 
-      if(credentials.distributionId)
-      new Cloudfront({credentials}).createInvalidation(params, function(err, data) {
+    if (credentials.distributionId)
+      new Cloudfront({ credentials }).createInvalidation(params, function(
+        err,
+        data
+      ) {
         if (err) console.log(err, err.stack);
         else console.log(data);
       });
-    });
+  });
 });
