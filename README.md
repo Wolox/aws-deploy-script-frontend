@@ -19,13 +19,11 @@ ROOT
     build/
       index.html
       ...
-    script/
-      aws.js
-      s3.js
+    aws.js
     ...
 ```
 
-- The `aws.js` file will contain credentials and will export them as an object like this
+- The `aws.js` file should be at the root of your project, it will contain credentials and will export them as an object like this:
 
 ```js
 module.exports = {
@@ -50,19 +48,30 @@ module.exports = {
 
 - The `distributionId` is optional, in case you've got it. The script will create an invalidation for all your files.
 
-## Params
-You can run the script like this:
+## Usage
+
+You can install this package globally and run `aws-deploy`
 
 ```
-node script/s3.js <enviroment-name>
+npm install -g aws-deploy-script-frontend
 ```
 
-This enviroment name is the key of the main object exported in `aws.js`.
+```
+aws-deploy <enviroment-name> <build-path>
+```
+
+* This **enviroment-name** is the key of the main object exported in `aws.js`.
+* The **build-path** is optional and defaults to `build`.
+
+Alternatively, you can run the script like this:
+
+```
+node script/s3.js <enviroment-name> <build-path>
+```
 
 ## Required dependencies
 
 The dependency you need to install is [aws-sdk](https://www.npmjs.com/package/aws-sdk)
-
 
 ## About
 
