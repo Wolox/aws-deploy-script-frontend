@@ -1,8 +1,13 @@
+#!/usr/bin/env node
+
 const S3 = require("aws-sdk/clients/s3"),
   Cloudfront = require("aws-sdk/clients/cloudfront"),
   fs = require("fs"),
-  awsCredentials = require("./aws.js"),
+  awsCredentials = require(process.cwd() + "/aws.js"),
   path = require("path");
+
+const buildDirectoryName = process.argv[3] || "build";
+const buildPath = path.join(process.cwd(), buildDirectoryName);
 
 let credentials;
 if (process.argv[2]) credentials = awsCredentials[process.argv[2]];
@@ -16,7 +21,7 @@ const uploader = new S3({
 
 function read(file) {
   return new Promise((resolve, _) => {
-    fs.readFile("build/" + file, (_, data) => {
+    fs.readFile(path.join(buildPath, file), (_, data) => {
       var base64data = new Buffer(data, "binary");
       resolve(base64data);
     });
@@ -68,10 +73,10 @@ const recursiveRead = function(dir, done) {
   });
 };
 
-recursiveRead("build/", function(err, results) {
+recursiveRead(buildPath, function(err, results) {
   if (err) throw err;
   Promise.all(
-    results.map(result => result.slice(result.indexOf("build") + 6)).map(read)
+    results.map(result => result.slice(result.indexOf(buildDirectoryName) + buildDirectoryName.length)).map(read)
   ).then(() => {
     var params = {
       DistributionId: credentials.distributionId /* required */,
