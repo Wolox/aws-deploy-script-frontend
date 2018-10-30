@@ -4,26 +4,26 @@ const S3 = require("aws-sdk/clients/s3"),
   fs = require("fs"),
   awsCredentials = require(process.cwd() + "/aws.js"),
   path = require("path"),
-  parseArgs = require('minimist');
+  parseArgs = require("minimist");
 
 const args = parseArgs(process.argv);
 
 let relativePath, env;
 
-if(args.path) relativePath = args.path;
-else if(args.p) relativePath = args.p;
+if (args.path) relativePath = args.path;
+else if (args.p) relativePath = args.p;
 
-if(args.env) env = args.env;
-else if(args.e) env = args.e;
+if (args.env) env = args.env;
+else if (args.e) env = args.e;
 
-
-const buildDirectoryName = relativePath || "build";
+const buildDirectoryName = relativePath || "build";
 const buildPath = path.join(process.cwd(), buildDirectoryName);
 
 let credentials;
 if (env) credentials = awsCredentials[env];
-else if (awsCredentials.development) credentials = awsCredentials.development; 
-else throw "Param enviroment missing, there is no development credentials for default deploy";
+else if (awsCredentials.development) credentials = awsCredentials.development;
+else
+  throw "Param enviroment missing, there is no development credentials for default deploy";
 
 const uploader = new S3({
   region: credentials.region,
@@ -88,28 +88,33 @@ const recursiveRead = function(dir, done) {
 recursiveRead(buildPath, function(err, results) {
   if (err) throw err;
   Promise.all(
-    results.map(result => result.slice(result.indexOf(buildDirectoryName) + buildDirectoryName.length)).map(read)
+    results
+      .map(result =>
+        result.slice(
+          result.indexOf(buildDirectoryName) + buildDirectoryName.length
+        )
+      )
+      .map(read)
   ).then(() => {
     var params = {
-      DistributionId: credentials.distributionId /* required */,
+      DistributionId: credentials.distributionId,
       InvalidationBatch: {
-        /* required */
-        CallerReference: new Date().getTime().toString() /* required */,
+        CallerReference: new Date().getTime().toString(),
         Paths: {
-          /* required */
-          Quantity: results.length /* required */,
+          Quantity: results.length,
           Items: results
         }
       }
     };
 
-    if (credentials.distributionId)
-      new Cloudfront({ credentials }).createInvalidation(params, function(
-        err,
-        data
-      ) {
-        if (err) console.log(err, err.stack);
-        else console.log(data);
-      });
+    if (credentials.distributionId) {
+      new Cloudfront({ credentials }).createInvalidation(
+        params,
+        (err, data) => {
+          if (err) console.log(err, err.stack);
+          else console.log(data);
+        }
+      );
+    }
   });
 });
