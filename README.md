@@ -61,12 +61,17 @@ aws-deploy <enviroment-name> <build-path>
 ```
 
 * This **enviroment-name** is the key of the main object exported in `aws.js`.
+* If no **enviroment-name** is declared then it will use `development` as default`.
 * The **build-path** is optional and defaults to `build`.
 
 Alternatively, you can run the script like this:
 
 ```
-node script/s3.js <enviroment-name> <build-path>
+node script/s3.js --env <enviroment-name> --path <build-path>
+
+or
+
+node script/s3.js -e <enviroment-name> -p <build-path>
 ```
 
 ## Required dependencies

@@ -1,17 +1,29 @@
 #!/usr/bin/env node
-
 const S3 = require("aws-sdk/clients/s3"),
   Cloudfront = require("aws-sdk/clients/cloudfront"),
   fs = require("fs"),
   awsCredentials = require(process.cwd() + "/aws.js"),
-  path = require("path");
+  path = require("path"),
+  parseArgs = require('minimist');
 
-const buildDirectoryName = process.argv[3] || "build";
+const args = parseArgs(process.argv);
+
+let relativePath, env;
+
+if(args.path) relativePath = args.path;
+else if(args.p) relativePath = args.p;
+
+if(args.env) env = args.env;
+else if(args.e) env = args.e;
+
+
+const buildDirectoryName = relativePath || "build";
 const buildPath = path.join(process.cwd(), buildDirectoryName);
 
 let credentials;
-if (process.argv[2]) credentials = awsCredentials[process.argv[2]];
-else throw "Param enviroment missing";
+if (env) credentials = awsCredentials[env];
+else if (awsCredentials.development) credentials = awsCredentials.development; 
+else throw "Param enviroment missing, there is no development credentials for default deploy";
 
 const uploader = new S3({
   region: credentials.region,
