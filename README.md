@@ -57,7 +57,7 @@ npm install -g aws-deploy-script-frontend
 ```
 
 ```
-aws-deploy -env <enviroment-name> -path <build-path>
+aws-deploy -e <enviroment-name> -p <build-path>
 ```
 
 * This **enviroment-name** is the key of the main object exported in `aws.js`.
