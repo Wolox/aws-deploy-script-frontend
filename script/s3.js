@@ -45,12 +45,8 @@ function read(file) {
           CacheControl: "max-age=6048000",
           Expires: 6048000
         },
-        function(error) {
-          if (error && error.statusCode === 403) {
-            reject("Invalid credentials");
-          } else if (error) {
-            reject("An error has occurred during the upload");
-          }
+        (error) => {
+          if (error) return reject("Invalid credentials");
           console.log("Successfully uploaded", file);
           resolve(file);
         }
@@ -59,7 +55,7 @@ function read(file) {
   });
 }
 
-const recursiveRead = function(dir, done) {
+const recursiveRead = (dir, done) => {
   var results = [];
   fs.readdir(dir, function(err, list) {
     if (err) return done(err);
@@ -82,16 +78,15 @@ const recursiveRead = function(dir, done) {
   });
 };
 
-recursiveRead(buildPath, function(err, results) {
+recursiveRead(buildPath, (err, results) => {
   if (err) throw err;
   Promise.all(
     results
       .map(result =>
-        result.slice(
-          result.indexOf(buildDirectoryName) + buildDirectoryName.length
-        )
+        read(result.slice(
+          result.indexOf(buildDirectoryName) + buildDirectoryName.length +1
+        ))
       )
-      .map(read)
   ).then(() => {
     var params = {
       DistributionId: credentials.distributionId,
@@ -99,7 +94,7 @@ recursiveRead(buildPath, function(err, results) {
         CallerReference: new Date().getTime().toString(),
         Paths: {
           Quantity: results.length,
-          Items: results
+          Items: results.map(result => result.slice(result.indexOf(buildDirectoryName) + buildDirectoryName.length).replace(/\s+/g, '-'))
         }
       }
     };
@@ -113,5 +108,7 @@ recursiveRead(buildPath, function(err, results) {
         }
       );
     }
+  }).catch(err => {
+    console.log(err);
   });
 });
