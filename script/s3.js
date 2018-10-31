@@ -8,7 +8,7 @@ const S3 = require("aws-sdk/clients/s3"),
 
 const args = parseArgs(process.argv);
 
-let relativePath, env;
+let relativePath, env = "development";
 
 if (args.path) relativePath = args.path;
 else if (args.p) relativePath = args.p;
@@ -19,11 +19,8 @@ else if (args.e) env = args.e;
 const buildDirectoryName = relativePath || "build";
 const buildPath = path.join(process.cwd(), buildDirectoryName);
 
-let credentials;
-if (env) credentials = awsCredentials[env];
-else if (awsCredentials.development) credentials = awsCredentials.development;
-else
-  throw "Param enviroment missing, there is no development credentials for default deploy";
+credentials = awsCredentials[env];
+if (!credentials) throw "There are no credentials for environment: " + env;
 
 const uploader = new S3({
   region: credentials.region,
