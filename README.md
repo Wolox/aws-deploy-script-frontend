@@ -56,6 +56,12 @@ You can install this package globally and run `aws-deploy`
 npm install -g aws-deploy-script-frontend
 ```
 
+The command line to execute can be:
+
+```
+aws-deploy --env <enviroment-name> --path <build-path>
+```
+or
 ```
 aws-deploy -e <enviroment-name> -p <build-path>
 ```
