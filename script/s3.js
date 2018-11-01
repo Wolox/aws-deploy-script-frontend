@@ -94,7 +94,7 @@ recursiveRead(buildPath, (err, results) => {
         CallerReference: new Date().getTime().toString(),
         Paths: {
           Quantity: results.length,
-          Items: results.map(result => result.slice(result.indexOf(buildDirectoryName) + buildDirectoryName.length).replace(/\s+/g, '-'))
+          Items: results.map(result => result.slice(result.indexOf(buildDirectoryName) + buildDirectoryName.length).replace(/\s+/g, '%20'))
         }
       }
     };
