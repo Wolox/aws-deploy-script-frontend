@@ -28,7 +28,7 @@ const uploader = new S3({
   credentials: credentials
 });
 
-function read(file) {
+const read = file => {
   return new Promise((resolve, _) => {
     fs.readFile(path.join(buildPath, file), (_, data) => {
       var base64data = new Buffer(data, "binary");

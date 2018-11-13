@@ -4,7 +4,7 @@
   "description": "AWS script for deploying your frontend applications.",
   "main": "./script/s3.js",
   "scripts": {
-    "test": "jest"
+    "test": "./node_modules/.bin/jest"
   },
   "repository": {
     "type": "git",
