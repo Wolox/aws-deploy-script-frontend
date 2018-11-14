@@ -4,7 +4,8 @@ const S3 = require("aws-sdk/clients/s3"),
   fs = require("fs"),
   awsCredentials = require(process.cwd() + "/aws.js"),
   path = require("path"),
-  parseArgs = require("minimist");
+  parseArgs = require("minimist"),
+  mime = require('mime-types');
 
 const args = parseArgs(process.argv);
 
@@ -25,7 +26,10 @@ if (!credentials) throw "There are no credentials for environment: " + env;
 const uploader = new S3({
   region: credentials.region,
   apiVersion: "2006-03-01",
-  credentials: credentials
+  credentials: credentials,
+  httpOptions: {
+    timeout: 0
+  }
 });
 
 const read = file => {
@@ -43,12 +47,13 @@ const read = file => {
           Body: base64data,
           ACL: "public-read",
           CacheControl: "max-age=6048000",
-          Expires: 6048000
+          Expires: 6048000,
+          ContentType: mime.lookup(file)
         },
         (error) => {
-          if (error) return reject("Invalid credentials");
+          if (error) return reject(error);
           console.log("Successfully uploaded", file);
-          resolve(file);
+          return resolve(file);
         }
       );
     });
