@@ -53,7 +53,7 @@ module.exports = {
 You can install this package globally and run `aws-deploy`
 
 ```
-npm install -g aws-deploy-script-frontend
+npm install -g aws-deploy-script-fe
 ```
 
 The command line to execute can be:
