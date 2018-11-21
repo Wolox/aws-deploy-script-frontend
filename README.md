@@ -74,6 +74,23 @@ aws-deploy -e <enviroment-name> -p <build-path>
 
 The dependency you need to install is [aws-sdk](https://www.npmjs.com/package/aws-sdk)
 
+
+## Required policies
+
+To run this script you must add these action policies to the user configured in the `aws.js` file
+
+```js
+"Action": [
+  "s3:GetObject",
+  "s3:GetObjectAcl",
+  "s3:ListMultipartUploadParts",
+  "s3:PutObject",
+  "s3:PutObjectAcl",
+  "s3:DeleteObject",
+  "cloudfront:CreateInvalidation"
+]
+```
+
 ## About
 
 This project is maintained by [Damián Finkelstein](https://github.com/damfinkel), [Pablo Ferro](https://github.com/pabloferro), [Francisco Iglesias](https://github.com/FrankIglesias) and [Lucas Zibell](https://github.com/LucasZibell) and it was written by [Wolox](http://www.wolox.com.ar).
