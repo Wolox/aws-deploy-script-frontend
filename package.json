@@ -1,0 +1,31 @@
+{
+  "name": "aws-deploy-script-fe",
+  "version": "0.0.3",
+  "description": "AWS script for deploying your frontend applications.",
+  "main": "./script/s3.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wolox/aws-deploy-script-frontend.git"
+  },
+  "author": "Wolox",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Wolox/aws-deploy-script-frontend/issues"
+  },
+  "homepage": "https://github.com/Wolox/aws-deploy-script-frontend#readme",
+  "dependencies": {
+    "aws-sdk": "^2.344.0",
+    "mime-types": "^2.1.21",
+    "minimist": "^1.2.0"
+  },
+  "bin": {
+    "aws-deploy": "./script/s3.js"
+  },
+  "devDependencies": {
+    "jest": "^23.6.0",
+    "shelljs": "^0.8.2"
+  }
+}
