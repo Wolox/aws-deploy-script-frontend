@@ -32,10 +32,35 @@ const uploader = new S3({
   }
 });
 
+const emptyBucket = (bucketName, callback) => {
+  let params = {
+    Bucket: bucketName
+  };
+
+  uploader.listObjects(params, function(err, data) {
+    if (err) return callback(err);
+
+    if (data.Contents.length == 0) callback();
+
+    params = { Bucket: bucketName };
+    params.Delete = { Objects:[] };
+
+    data.Contents.forEach((content) => {
+      params.Delete.Objects.push({ Key: content.Key });
+    });
+
+    uploader.deleteObjects(params, function(err, _) {
+      if (err) return callback(err);
+      if (data.isTruncated) emptyBucket(bucketName, callback);
+      else callback();
+    });
+  });
+}
+
 const read = file => {
   return new Promise((resolve, _) => {
     fs.readFile(path.join(buildPath, file), (_, data) => {
-      var base64data = new Buffer(data, "binary");
+      var base64data = Buffer.from(data, "binary");
       resolve(base64data);
     });
   }).then(base64data => {
@@ -83,7 +108,7 @@ const recursiveRead = (dir, done) => {
   });
 };
 
-recursiveRead(buildPath, (err, results) => {
+const uploadFiles = () => recursiveRead(buildPath, (err, results) => {
   if (err) throw err;
   Promise.all(
     results
@@ -116,4 +141,14 @@ recursiveRead(buildPath, (err, results) => {
   }).catch(err => {
     console.log(err);
   });
+});
+
+emptyBucket(credentials.bucket, (err) => {
+  console.log("Cleaning the bucket...");
+  if (err) {
+    console.error(err, err.stack);
+  } else {
+    console.log("Uploading new build...");
+    uploadFiles();
+  }  
 });
