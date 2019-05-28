@@ -32,14 +32,20 @@ module.exports = {
     secretAccessKey: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     region: "us-east-1",
     bucket: "<Name of the bucket>",
-    distributionId: "XXXXXXXXXXXXXX"
+    distributionId: "XXXXXXXXXXXXXX",
+    options: { // Optional
+      preserveFiles: ["foo.txt", "bar.js"]
+    }
   },
   stage: {
     accessKeyId: "XXXXXXXXXXXXXXXXXXXX",
     secretAccessKey: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     region: "us-east-1",
     bucket: "<Name of the bucket>",
-    distributionId: "XXXXXXXXXXXXXX"
+    distributionId: "XXXXXXXXXXXXXX",
+    options: { // Optional
+      preserveFiles: ["static/baz.js"]
+    }
   }
 };
 ```
@@ -47,6 +53,10 @@ module.exports = {
 - The  `build/` folder will contain the file you want to sync
 
 - The `distributionId` is optional, in case you've got it. The script will create an invalidation for all your files.
+
+## Options
+
+- `preserveFiles`. It allows to specify an array of S3 file paths that won't be removed when the script cleans the bucket before uploading the new build. It's useful if you want to upload files manually to the S3 bucket.
 
 ## Usage
 
