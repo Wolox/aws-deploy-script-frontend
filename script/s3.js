@@ -20,7 +20,9 @@ else if (args.e) env = args.e;
 const buildDirectoryName = relativePath || "build";
 const buildPath = path.join(process.cwd(), buildDirectoryName);
 
-credentials = awsCredentials[env];
+let credentials = { ...awsCredentials[env] };
+const options = credentials.options || {};
+delete credentials.options;
 if (!credentials) throw "There are no credentials for environment: " + env;
 
 const uploader = new S3({
@@ -46,7 +48,9 @@ const emptyBucket = (bucketName, callback) => {
     params.Delete = { Objects:[] };
 
     data.Contents.forEach((content) => {
-      params.Delete.Objects.push({ Key: content.Key });
+      if (!options.preserveFiles || !options.preserveFiles.includes(content.Key)) {
+        params.Delete.Objects.push({ Key: content.Key });
+      }
     });
 
     uploader.deleteObjects(params, function(err, _) {
