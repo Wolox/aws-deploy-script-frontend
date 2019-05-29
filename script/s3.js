@@ -48,11 +48,9 @@ const emptyBucket = (bucketName, callback) => {
     params.Delete = { Objects:[] };
 
     data.Contents.forEach((content) => {
-      if (options.preserveFiles && options.preserveFiles.includes(content.Key)) {
-        return;
+      if (!options.preserveFiles || !options.preserveFiles.includes(content.Key)) {
+        params.Delete.Objects.push({ Key: content.Key });
       }
-      
-      params.Delete.Objects.push({ Key: content.Key });
     });
 
     uploader.deleteObjects(params, function(err, _) {
