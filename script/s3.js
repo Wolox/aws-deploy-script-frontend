@@ -17,6 +17,9 @@ else if (args.p) relativePath = args.p;
 if (args.env) env = args.env;
 else if (args.e) env = args.e;
 
+if (args.outputPath) outputPath = args.outputPath;
+else if (args.o) outputPath = args.o;
+
 const buildDirectoryName = relativePath || "build";
 const buildPath = path.join(process.cwd(), buildDirectoryName);
 
@@ -74,10 +77,11 @@ const read = file => {
       const fileIsMainFile = isMainFile(file);
       let CacheControl = fileIsMainFile ? "max-age=0" : "max-age=6048000";
       let Expires = fileIsMainFile ? 0 : 6048000;
+      const fileKey = outputPath ? `${outputPath}/${file}` : file;
       uploader.putObject(
         {
           Bucket: credentials.bucket,
-          Key: file,
+          Key: fileKey,
           Body: base64data,
           ACL: "public-read",
           CacheControl: "max-age=6048000",
