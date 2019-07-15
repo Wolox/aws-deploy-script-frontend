@@ -1,6 +1,6 @@
 {
   "name": "aws-deploy-script-fe",
-  "version": "2.0.0",
+  "version": "1.0.0",
   "description": "AWS script for deploying your frontend applications.",
   "main": "./script/s3.js",
   "scripts": {

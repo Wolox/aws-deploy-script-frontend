@@ -84,8 +84,8 @@ const read = file => {
           Key: fileKey,
           Body: base64data,
           ACL: "public-read",
-          CacheControl: "max-age=6048000",
-          Expires: 6048000,
+          CacheControl: CacheControl,
+          Expires: Expires,
           ContentType: mime.lookup(file)
         },
         (error) => {
