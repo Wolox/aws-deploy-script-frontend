@@ -42,7 +42,7 @@ const emptyBucket = (bucketName, callback) => {
     Bucket: bucketName
   };
 
-  uploader.listObjectsV2(params, function (err, data) {
+  uploader.listObjectsV2(params, (err, data) => {
     if (err) return callback(err);
 
     if (data.Contents.length == 0) callback();
@@ -100,15 +100,15 @@ const read = file => {
 
 const recursiveRead = (dir, done) => {
   var results = [];
-  fs.readdir(dir, function (err, list) {
+  fs.readdir(dir, (err, list) => {
     if (err) return done(err);
     var pending = list.length;
     if (!pending) return done(null, results);
-    list.forEach(function (file) {
+    list.forEach(file => {
       file = path.resolve(dir, file);
-      fs.stat(file, function (_, stat) {
+      fs.stat(file, (_, stat) => {
         if (stat && stat.isDirectory()) {
-          recursiveRead(file, function (_, res) {
+          recursiveRead(file, (_, res) => {
             results = results.concat(res);
             if (!--pending) done(null, results);
           });
