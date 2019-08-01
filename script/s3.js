@@ -8,8 +8,13 @@ const S3 = require("aws-sdk/clients/s3"),
   mime = require('mime-types');
 
 const args = parseArgs(process.argv);
+const colors = {
+  red: '\x1b[31m%s\x1b[0m',
+  green: '\x1b[32m%s\x1b[0m'
+};
 
 let relativePath, env = "development";
+let outputPath = '';
 
 if (args.path) relativePath = args.path;
 else if (args.p) relativePath = args.p;
@@ -49,10 +54,10 @@ const emptyBucket = (bucketName, callback) => {
 
     params = { Bucket: bucketName };
     params.Delete = { Objects: [] };
-
     data.Contents.forEach(content => {
       if (!options.preserveFiles || !options.preserveFiles.includes(content.Key)) {
         params.Delete.Objects.push({ Key: content.Key });
+        console.log(colors.red, `[Deleting]: ${content.Key}`);
       }
     });
 
@@ -90,7 +95,7 @@ const read = file => {
         },
         (error) => {
           if (error) return reject(error);
-          console.log("Successfully uploaded", file);
+          console.log(colors.green, `Successfully uploaded ${file}`);
           return resolve(file);
         }
       );
@@ -157,11 +162,11 @@ const uploadFiles = () => recursiveRead(buildPath, (err, results) => {
 });
 
 emptyBucket(credentials.bucket, err => {
-  console.log("Cleaning the bucket...");
+  console.log(colors.green, "Cleaning the bucket...");
   if (err) {
     console.error(err, err.stack);
   } else {
-    console.log("Uploading new build...");
+    console.log(colors.green, "Uploading new build...");
     uploadFiles();
   }
 });

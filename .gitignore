@@ -2,3 +2,4 @@ node_modules/
 aws.js
 build/*
 coverage/*
+.vscode
