@@ -58,6 +58,12 @@ module.exports = {
 
 - `preserveFiles`. It allows to specify an array of S3 file paths that won't be removed when the script cleans the bucket before uploading the new build. It's useful if you want to upload files manually to the S3 bucket.
 
+- `environment` or `e`. It specifies the environment in which you are going to deploy your app. Also the key of your `aws.js` file that has the corresponding credentials
+
+- `path` or `p`. The path of you generated static build files.
+
+- `outputPath` or `o`. The S3 path to upload your files  (e.g. in case you don't want to upload all files in the root of the bucket)
+
 ## Usage
 
 You can install this package globally and run `aws-deploy`

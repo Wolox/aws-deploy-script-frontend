@@ -17,6 +17,9 @@ else if (args.p) relativePath = args.p;
 if (args.env) env = args.env;
 else if (args.e) env = args.e;
 
+if (args.outputPath) outputPath = args.outputPath;
+else if (args.o) outputPath = args.o;
+
 const buildDirectoryName = relativePath || "build";
 const buildPath = path.join(process.cwd(), buildDirectoryName);
 
@@ -39,27 +42,29 @@ const emptyBucket = (bucketName, callback) => {
     Bucket: bucketName
   };
 
-  uploader.listObjectsV2(params, function(err, data) {
+  uploader.listObjectsV2(params, (err, data) => {
     if (err) return callback(err);
 
     if (data.Contents.length == 0) callback();
 
     params = { Bucket: bucketName };
-    params.Delete = { Objects:[] };
+    params.Delete = { Objects: [] };
 
-    data.Contents.forEach((content) => {
+    data.Contents.forEach(content => {
       if (!options.preserveFiles || !options.preserveFiles.includes(content.Key)) {
         params.Delete.Objects.push({ Key: content.Key });
       }
     });
 
-    uploader.deleteObjects(params, function(err, _) {
+    uploader.deleteObjects(params, (err, _) => {
       if (err) return callback(err);
       if (data.isTruncated) emptyBucket(bucketName, callback);
       else callback();
     });
   });
 }
+
+const isMainFile = file => file === "index.html";
 
 const read = file => {
   return new Promise((resolve, _) => {
@@ -69,14 +74,18 @@ const read = file => {
     });
   }).then(base64data => {
     return new Promise((resolve, reject) => {
+      const fileIsMainFile = isMainFile(file);
+      let CacheControl = fileIsMainFile ? "max-age=0" : "max-age=6048000";
+      let Expires = fileIsMainFile ? 0 : 6048000;
+      const fileKey = outputPath ? `${outputPath}/${file}` : file;
       uploader.putObject(
         {
           Bucket: credentials.bucket,
-          Key: file,
+          Key: fileKey,
           Body: base64data,
           ACL: "public-read",
-          CacheControl: "max-age=6048000",
-          Expires: 6048000,
+          CacheControl: CacheControl,
+          Expires: Expires,
           ContentType: mime.lookup(file)
         },
         (error) => {
@@ -91,15 +100,15 @@ const read = file => {
 
 const recursiveRead = (dir, done) => {
   var results = [];
-  fs.readdir(dir, function(err, list) {
+  fs.readdir(dir, (err, list) => {
     if (err) return done(err);
     var pending = list.length;
     if (!pending) return done(null, results);
-    list.forEach(function(file) {
+    list.forEach(file => {
       file = path.resolve(dir, file);
-      fs.stat(file, function(_, stat) {
+      fs.stat(file, (_, stat) => {
         if (stat && stat.isDirectory()) {
-          recursiveRead(file, function(_, res) {
+          recursiveRead(file, (_, res) => {
             results = results.concat(res);
             if (!--pending) done(null, results);
           });
@@ -118,7 +127,7 @@ const uploadFiles = () => recursiveRead(buildPath, (err, results) => {
     results
       .map(result =>
         read(result.slice(
-          result.indexOf(buildDirectoryName) + buildDirectoryName.length +1
+          result.indexOf(buildDirectoryName) + buildDirectoryName.length + 1
         ))
       )
   ).then(() => {
@@ -147,12 +156,12 @@ const uploadFiles = () => recursiveRead(buildPath, (err, results) => {
   });
 });
 
-emptyBucket(credentials.bucket, (err) => {
+emptyBucket(credentials.bucket, err => {
   console.log("Cleaning the bucket...");
   if (err) {
     console.error(err, err.stack);
   } else {
     console.log("Uploading new build...");
     uploadFiles();
-  }  
+  }
 });
