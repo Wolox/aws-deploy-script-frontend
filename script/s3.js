@@ -141,8 +141,8 @@ const uploadFiles = () => recursiveRead(buildPath, (err, results) => {
       InvalidationBatch: {
         CallerReference: new Date().getTime().toString(),
         Paths: {
-          Quantity: results.length,
-          Items: results.map(result => result.slice(result.indexOf(buildDirectoryName) + buildDirectoryName.length).replace(/\s+/g, '%20'))
+          Quantity: 1,
+          Items: ['/*']
         }
       }
     };
