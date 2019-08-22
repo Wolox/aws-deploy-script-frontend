@@ -75,11 +75,10 @@ const emptyBucket = (bucketName, callback) => {
 
 const isMainFile = file => file === "index.html";
 
-const isGzip = metaData => {
-  if (gzip){
-    return {...metaData, ContentEncoding: 'gzip'};
-  }
-  else {
+const getMetadataObject = metaData => {
+  if (gzip) {
+    return { ...metaData, ContentEncoding: 'gzip' };
+  } else {
     return metaData;
   }
 };
@@ -105,7 +104,7 @@ const read = file => {
         Expires: Expires,
         ContentType: mime.lookup(file)
       };
-      uploader.putObject(isGzip(metaData),
+      uploader.putObject(getMetadataObject(metaData),
         (error) => {
           if (error) return reject(error);
           console.log(colors.green, `Successfully uploaded ${file}`);
