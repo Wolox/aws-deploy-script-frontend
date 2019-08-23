@@ -15,6 +15,7 @@ const colors = {
 
 let relativePath, env = "development";
 let outputPath = '';
+const gzip = args.gzip || args.g;
 
 if (args.path) relativePath = args.path;
 else if (args.p) relativePath = args.p;
@@ -71,6 +72,14 @@ const emptyBucket = (bucketName, callback) => {
 
 const isMainFile = file => file === "index.html";
 
+const getMetadataObject = metaData => {
+  if (gzip) {
+    return { ...metaData, ContentEncoding: 'gzip' };
+  } else {
+    return metaData;
+  }
+};
+
 const read = file => {
   return new Promise((resolve, _) => {
     fs.readFile(path.join(buildPath, file), (_, data) => {
@@ -83,16 +92,16 @@ const read = file => {
       let CacheControl = fileIsMainFile ? "max-age=0" : "max-age=6048000";
       let Expires = fileIsMainFile ? 0 : 6048000;
       const fileKey = outputPath ? `${outputPath}/${file}` : file;
-      uploader.putObject(
-        {
-          Bucket: credentials.bucket,
-          Key: fileKey,
-          Body: base64data,
-          ACL: "public-read",
-          CacheControl: CacheControl,
-          Expires: Expires,
-          ContentType: mime.lookup(file)
-        },
+      const metaData = {
+        Bucket: credentials.bucket,
+        Key: fileKey,
+        Body: base64data,
+        ACL: "public-read",
+        CacheControl: CacheControl,
+        Expires: Expires,
+        ContentType: mime.lookup(file)
+      };
+      uploader.putObject(getMetadataObject(metaData),
         (error) => {
           if (error) return reject(error);
           console.log(colors.green, `Successfully uploaded ${file}`);
