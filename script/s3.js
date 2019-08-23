@@ -15,13 +15,10 @@ const colors = {
 
 let relativePath, env = "development";
 let outputPath = '';
-let gzip = false;
+const gzip = args.gzip || args.g;
 
 if (args.path) relativePath = args.path;
 else if (args.p) relativePath = args.p;
-
-if (args.gzip) gzip = true;
-else if (args.g) gzip = true;
 
 if (args.env) env = args.env;
 else if (args.e) env = args.e;
