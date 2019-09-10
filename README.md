@@ -34,7 +34,7 @@ module.exports = {
     bucket: "<Name of the bucket>",
     distributionId: "XXXXXXXXXXXXXX",
     options: { // Optional
-      preserveFiles: ["foo.txt", "bar.js"]
+      preserveFiles: [/^sitemap/, "bar.js"]
     }
   },
   stage: {
@@ -56,7 +56,7 @@ module.exports = {
 
 ## Options
 
-- `preserveFiles`. It allows to specify an array of S3 file paths that won't be removed when the script cleans the bucket before uploading the new build. It's useful if you want to upload files manually to the S3 bucket.
+- `preserveFiles`. It allows to specify an array of S3 file paths that won't be removed when the script cleans the bucket before uploading the new build. It's useful if you want to upload files manually to the S3 bucket. Supports regex and strings
 
 - `environment` or `e`. It specifies the environment in which you are going to deploy your app. Also the key of your `aws.js` file that has the corresponding credentials
 
