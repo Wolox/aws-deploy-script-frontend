@@ -43,6 +43,12 @@ const uploader = new S3({
   }
 });
 
+const findRegexOrString = (array, value) =>
+  array.some(string =>
+    // if it is a regex string.test exist as a func, else is undefined
+    string.test ? string.test(value) : value === string
+  );
+
 const emptyBucket = (bucketName, callback) => {
   let params = {
     Bucket: bucketName
@@ -56,7 +62,7 @@ const emptyBucket = (bucketName, callback) => {
     params = { Bucket: bucketName };
     params.Delete = { Objects: [] };
     data.Contents.forEach(content => {
-      if (!options.preserveFiles || !options.preserveFiles.includes(content.Key)) {
+      if (!options.preserveFiles || !findRegexOrString(options.preserveFiles, content.Key)) {
         params.Delete.Objects.push({ Key: content.Key });
         console.log(colors.red, `[Deleting]: ${content.Key}`);
       }
