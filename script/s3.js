@@ -141,8 +141,34 @@ const recursiveRead = (dir, done) => {
   });
 };
 
+const persistDeployTime = deployTime => {
+  const metricsInfo = awsCredentials.metrics || {};
+  if (metricsInfo.baseUrl) {
+    const axiosApi = axios.create({
+      baseURL: metricsInfo.baseUrl,
+      timeout: 10000
+    });
+    body = {
+      env,
+      tech: metricsInfo.tech,
+      repo_name: metricsInfo.repoName,
+      metrics: [
+        {
+          name: 'deploy-time',
+          version: '1.0',
+          value: `${deployTime}`
+        }
+      ]
+    }
+    axiosApi.post('/metrics', body).then(() => console.log('Deploy time saved succesfully'), error => console.log(`Deploy time couldn't be saved error: ${error}`));
+  } else {
+    console.log("Deploy time couldn't be saved due to the missing api base url")
+  }
+} 
+
 const uploadFiles = () => recursiveRead(buildPath, (err, results) => {
   if (err) throw err;
+  const start = new Date();
   Promise.all(
     results
       .map(result =>
@@ -171,6 +197,8 @@ const uploadFiles = () => recursiveRead(buildPath, (err, results) => {
         }
       );
     }
+    deployTime = (new Date().getTime() - start.getTime()) / 1000;
+    persistDeployTime(deployTime)
   }).catch(err => {
     console.log(err);
   });

@@ -25,6 +25,8 @@ ROOT
 
 - The `aws.js` file should be at the root of your project, it will contain credentials and will export them as an object like this:
 
+- The `aws.js` file also contains a specific object called metrics to persist the measured `deploy-time` in a db. If you do not wish to persist the metric the object can be removed.
+
 ```js
 module.exports = {
   development: {
@@ -46,6 +48,11 @@ module.exports = {
     options: { // Optional
       preserveFiles: ["static/baz.js"]
     }
+  },
+  metrics: {
+    tech: "react/vue/angular",
+    repoName: "<Name of the repository>",
+    baseUrl: "<Url to the api db>"
   }
 };
 ```
