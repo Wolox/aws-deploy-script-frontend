@@ -5,7 +5,8 @@ const S3 = require("aws-sdk/clients/s3"),
   awsCredentials = require(process.cwd() + "/aws.js"),
   path = require("path"),
   parseArgs = require("minimist"),
-  mime = require('mime-types');
+  mime = require('mime-types'),
+  axios = require('axios');
 
 const args = parseArgs(process.argv);
 const colors = {

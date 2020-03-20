@@ -18,6 +18,7 @@
   "homepage": "https://github.com/Wolox/aws-deploy-script-frontend#readme",
   "dependencies": {
     "aws-sdk": "^2.344.0",
+    "axios": "^0.19.2",
     "mime-types": "^2.1.21",
     "minimist": "^1.2.0"
   },
