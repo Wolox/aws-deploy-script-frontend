@@ -142,7 +142,7 @@ const recursiveRead = (dir, done) => {
   });
 };
 
-const persistDeployTime = deployTime => {
+const persistDeployTime = (deployTime, metricsInfo) => {
   if (metricsInfo.baseUrl) {
     const axiosApi = axios.create({
       baseURL: metricsInfo.baseUrl,
@@ -199,7 +199,7 @@ const uploadFiles = () => recursiveRead(buildPath, (err, results) => {
     }
     deployTime = (new Date().getTime() - start.getTime()) / 1000;
     if (awsCredentials.metrics) {
-      persistDeployTime(deployTime)
+      persistDeployTime(deployTime, awsCredentials.metrics)
     }
   }).catch(err => {
     console.log(err);
