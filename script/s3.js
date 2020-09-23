@@ -52,13 +52,14 @@ const findRegexOrString = (array, value) =>
 
 const emptyBucket = (bucketName, callback) => {
   let params = {
-    Bucket: bucketName
+    Bucket: bucketName,
+    Prefix: outputPath
   };
 
   uploader.listObjectsV2(params, (err, data) => {
     if (err) return callback(err);
 
-    if (data.Contents.length == 0) callback();
+    if (data.KeyCount === 0) return callback();
 
     params = { Bucket: bucketName };
     params.Delete = { Objects: [] };
