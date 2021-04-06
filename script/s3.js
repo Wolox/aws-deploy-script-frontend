@@ -8,6 +8,8 @@ const S3 = require("aws-sdk/clients/s3"),
   mime = require('mime-types'),
   axios = require('axios');
 
+require('dotenv').config()
+
 const args = parseArgs(process.argv);
 const colors = {
   red: '\x1b[31m%s\x1b[0m',
@@ -146,7 +148,10 @@ const persistDeployTime = (deployTime, metricsInfo) => {
   if (metricsInfo.baseUrl) {
     const axiosApi = axios.create({
       baseURL: metricsInfo.baseUrl,
-      timeout: 10000
+      timeout: 10000,
+      headers: {
+        Authorization: process.env.DB_API_KEY
+      }
     });
     body = {
       env,

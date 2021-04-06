@@ -3,3 +3,4 @@ aws.js
 build/*
 coverage/*
 .vscode
+.env
